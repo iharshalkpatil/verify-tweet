@@ -73,3 +73,42 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
+
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def generate_tweet_representation(change_description, reason_description):
+    # The existing function for generating the tweet representation
+    # ...
+
+def verify_tweet(tweet_content, expected_change_description, expected_reason_description):
+    # The existing function for verifying the tweet content
+    # ...
+
+@app.route('/verify_tweet', methods=['POST'])
+def verify_tweet_api():
+    try:
+        data = request.get_json()
+
+        change_description = data['change_description']
+        reason_description = data['reason_description']
+
+        expected_change_description = "Upgrade component to JDK 17"
+        expected_reason_description = "Java 11 is going to be out of support. Hide the create_date column on UI as users are not interested to see when a record is created and also to make some space on the UI apps for other fields to be visible better."
+
+        generated_tweet = generate_tweet_representation(change_description, reason_description)
+
+        verification_result = verify_tweet(generated_tweet, expected_change_description, expected_reason_description)
+
+        if verification_result:
+            return jsonify({"status": "Tweet content is valid"})
+        else:
+            return jsonify({"error": "Tweet content is not valid"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
